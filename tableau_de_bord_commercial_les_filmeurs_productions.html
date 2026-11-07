@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-900 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilotage Commercial - Les Filmeurs Productions</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col bg-slate-950 text-slate-100 overflow-hidden">
+
+    <!-- Header Header Section -->
+    <header class="bg-slate-900/80 backdrop-blur border-b border-slate-800 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 flex-shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-xl text-amber-400">
+                <i data-lucide="clapperboard" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                    Les Filmeurs Productions
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">Pilotage 2026-2027</span>
+                </h1>
+                <p class="text-xs text-slate-400">Assistant commercial & Plan d'action unifié</p>
+            </div>
+        </div>
+
+        <!-- Global Stats / Quick indicators -->
+        <div class="flex items-center gap-3 overflow-x-auto pb-1 md:pb-0">
+            <div class="bg-slate-800/60 border border-slate-700/50 px-3.5 py-1.5 rounded-lg flex items-center gap-2.5 min-w-max">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-xs text-slate-400">Actions P1 (Immédiat) :</span>
+                <span id="stat-p1" class="text-sm font-bold text-white">0</span>
+            </div>
+            <div class="bg-slate-800/60 border border-slate-700/50 px-3.5 py-1.5 rounded-lg flex items-center gap-2.5 min-w-max">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                <span class="text-xs text-slate-400">Prospects Chauds :</span>
+                <span id="stat-chauds" class="text-sm font-bold text-white">0</span>
+            </div>
+            <div class="bg-slate-800/60 border border-slate-700/50 px-3.5 py-1.5 rounded-lg flex items-center gap-2.5 min-w-max">
+                <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                <span class="text-xs text-slate-400">Total suivi :</span>
+                <span id="stat-total" class="text-sm font-bold text-white">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Toolbar Section (Filters & Search) -->
+    <div class="bg-slate-900 border-b border-slate-800 px-6 py-3 flex flex-col lg:flex-row items-center justify-between gap-4 flex-shrink-0">
+        <!-- Search input -->
+        <div class="relative w-full lg:w-80">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="text" id="searchInput" placeholder="Rechercher un prospect, ville, interlocuteur..." 
+                   class="w-full bg-slate-950 border border-slate-700/60 rounded-lg pl-9 pr-4 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-colors">
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+            <!-- Category Filter Dropdown -->
+            <div class="flex items-center gap-2">
+                <label class="text-xs text-slate-400 hidden sm:inline">Catégorie:</label>
+                <select id="categoryFilter" class="bg-slate-950 border border-slate-700/60 text-slate-200 text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500">
+                    <option value="ALL">Toutes les catégories</option>
+                    <option value="CHAUD">🔥 Prospects Chauds</option>
+                    <option value="IMMO">🏛️ Immobilier de Luxe</option>
+                    <option value="MAIRIE">🏛️ Mairies & Vœux</option>
+                    <option value="INDUSTRIE">⚙️ Industrie & Savoir-faire</option>
+                    <option value="SERVICES">💼 Services & Associations</option>
+                    <option value="B2B">🤝 Partenaires B2B</option>
+                </select>
+            </div>
+
+            <!-- Priority Filter Dropdown -->
+            <div class="flex items-center gap-2">
+                <label class="text-xs text-slate-400 hidden sm:inline">Priorité:</label>
+                <select id="priorityFilter" class="bg-slate-950 border border-slate-700/60 text-slate-200 text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500">
+                    <option value="ALL">Toutes priorités</option>
+                    <option value="P1">🔴 P1 - Immédiat / Vœux</option>
+                    <option value="P2">🟡 P2 - Début 2027</option>
+                    <option value="P3">🔵 P3 - Printemps 2027 / Veille</option>
+                </select>
+            </div>
+
+            <!-- Status Filter Dropdown -->
+            <div class="flex items-center gap-2">
+                <label class="text-xs text-slate-400 hidden sm:inline">Statut:</label>
+                <select id="statusFilter" class="bg-slate-950 border border-slate-700/60 text-slate-200 text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500">
+                    <option value="ALL">Tous les statuts</option>
+                    <option value="ACTION_FAITE">🟢 Action réalisée</option>
+                    <option value="A_RELANCER">🟡 À relancer</option>
+                    <option value="PLANIFIE">🔵 Planifié</option>
+                    <option value="EN_VEILLE">⚪ En veille</option>
+                    <option value="PERDU">🔴 Perdu / Archivé</option>
+                </select>
+            </div>
+
+            <button id="resetFilters" class="text-xs text-slate-400 hover:text-white px-2 py-1 flex items-center gap-1 transition-colors">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Réinitialiser
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content / Table View -->
+    <main class="flex-1 overflow-auto p-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-300">
+                    <thead class="bg-slate-950 text-slate-400 text-xs uppercase tracking-wider font-semibold border-b border-slate-800 sticky top-0 z-10">
+                        <tr>
+                            <th scope="col" class="py-3.5 px-4">Prospect / Client</th>
+                            <th scope="col" class="py-3.5 px-4">Interlocuteur</th>
+                            <th scope="col" class="py-3.5 px-4">Catégorie</th>
+                            <th scope="col" class="py-3.5 px-4">Priorité & Statut</th>
+                            <th scope="col" class="py-3.5 px-4 w-1/3">Contexte & Stratégie</th>
+                            <th scope="col" class="py-3.5 px-4">Échéance</th>
+                            <th scope="col" class="py-3.5 px-4 text-right">Agenda</th>
+                        </tr>
+                    </thead>
+                    <tbody id="prospectsTableBody" class="divide-y divide-slate-800/60">
+                        <!-- Dynamic content filled via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty state -->
+            <div id="emptyState" class="hidden py-12 text-center">
+                <i data-lucide="search-x" class="w-12 h-12 text-slate-600 mx-auto mb-3"></i>
+                <p class="text-slate-400 text-sm font-medium">Aucun prospect ne correspond aux critères de recherche.</p>
+                <button onclick="document.getElementById('resetFilters').click()" class="mt-3 text-xs text-amber-400 hover:underline">Réinitialiser les filtres</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer / Context Bar -->
+    <footer class="bg-slate-900 border-t border-slate-800 px-6 py-2.5 text-xs text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-2 flex-shrink-0">
+        <div class="flex items-center gap-2">
+            <i data-lucide="info" class="w-4 h-4 text-amber-400"></i>
+            <span>Base consolidée CRM + Contacts Brevo — Mise à jour Nov. 2026</span>
+        </div>
+        <div>
+            <span>Les Filmeurs Productions &copy; 2026-2027</span>
+        </div>
+    </footer>
+
+    <!-- JavaScript Data & Logic -->
+    <script>
+        // Database of prospects
+        const prospectsData = [
+            // MAIRIES & VOEUX
+            {
+                id: 1,
+                name: "Mairie de Lacroix-Saint-Ouen",
+                contact: "Jérémy Gassert",
+                category: "MAIRIE",
+                categoryLabel: "Mairies & Vœux",
+                priority: "P1",
+                status: "ACTION_FAITE",
+                statusLabel: "Action réalisée",
+                strategy: "Projets 2027 et anticipation du budget. Mail de relance spécifique envoyé en Nov. 2026.",
+                dueDate: "2026-11-15",
+                displayDate: "Mi-Nov. 2026"
+            },
+            {
+                id: 2,
+                name: "Listing Mairies Compiégnois",
+                contact: "Secrétariats / Com",
+                category: "MAIRIE",
+                categoryLabel: "Mairies & Vœux",
+                priority: "P1",
+                status: "A_RELANCER",
+                statusLabel: "À relancer",
+                strategy: "Offre spéciale 'Film de Vœux & Rétrospective 2026'. Viser Antheuil-Portes, Attichy, Ressons, Villers, etc.",
+                dueDate: "2026-11-20",
+                displayDate: "Novembre 2026"
+            },
+
+            // PROSPECTS CHAUDS & COURT TERME
+            {
+                id: 3,
+                name: "OPUS PROTECT",
+                contact: "Arnaud Devred",
+                category: "CHAUD",
+                categoryLabel: "Prospect Chaud",
+                priority: "P1",
+                status: "A_RELANCER",
+                statusLabel: "À relancer",
+                strategy: "Prospect très occupé. Envoi d'un message ultra court avec concept vidéo produit / vêtements sécurité clés en main.",
+                dueDate: "2026-11-20",
+                displayDate: "Novembre 2026"
+            },
+            {
+                id: 4,
+                name: "Orpi Magenta (Compiègne)",
+                contact: "Isabelle & Yohann Pain",
+                category: "CHAUD",
+                categoryLabel: "Prospect Chaud",
+                priority: "P1",
+                status: "A_RELANCER",
+                statusLabel: "À relancer",
+                strategy: "Yohann a transmis à sa mère Isabelle. Prendre contact directement avec Isabelle pour relancer sur le devis/script agence Magenta.",
+                dueDate: "2026-11-25",
+                displayDate: "Novembre 2026"
+            },
+            {
+                id: 5,
+                name: "Musitelli",
+                contact: "M. Debout (Gérant)",
+                category: "CHAUD",
+                categoryLabel: "Prospect Chaud",
+                priority: "P1",
+                status: "A_RELANCER",
+                statusLabel: "À relancer",
+                strategy: "Nettoyage de grains / céréales. Intérêt confirmé pour la fin d'année. Relance suite aux échanges d'octobre.",
+                dueDate: "2026-11-30",
+                displayDate: "Fin Nov. 2026"
+            },
+            {
+                id: 6,
+                name: "Innov'Sécurité",
+                contact: "Mathilde Dessaint",
+                category: "SERVICES",
+                categoryLabel: "Services / Sécurité",
+                priority: "P1",
+                status: "PLANIFIE",
+                statusLabel: "Planifié",
+                strategy: "Beau potentiel en motion design / présentation. Rappel express prévu à la date fixée.",
+                dueDate: "2026-11-17",
+                displayDate: "17 Nov. 2026"
+            },
+            {
+                id: 7,
+                name: "Besson Industrie",
+                contact: "Direction / Com",
+                category: "INDUSTRIE",
+                categoryLabel: "Industrie",
+                priority: "P1",
+                status: "PLANIFIE",
+                statusLabel: "Planifié",
+                strategy: "Industrie de précision (niche). Bon échange préalable. Rappel prévu mi-décembre pour caler le budget.",
+                dueDate: "2026-12-15",
+                displayDate: "Mi-Déc. 2026"
+            },
+            {
+                id: 8,
+                name: "CMC (Barbery)",
+                contact: "Direction usine",
+                category: "INDUSTRIE",
+                categoryLabel: "Industrie",
+                priority: "P1",
+                status: "PLANIFIE",
+                statusLabel: "Planifié",
+                strategy: "Projet haut de gamme (~4000€). Relancer mi-décembre ou tout début d'année pour recréer le lien post-été.",
+                dueDate: "2026-12-15",
+                displayDate: "Mi-Déc. 2026"
+            },
+            {
+                id: 9,
+                name: "City Protect",
+                contact: "Damien",
+                category: "SERVICES",
+                categoryLabel: "Services",
+                priority: "P1",
+                status: "PLANIFIE",
+                statusLabel: "Planifié",
+                strategy: "Fin de leur renouvellement de marché. Reprendre contact autour d'un café/déjeuner comme convenu dans son dernier mail.",
+                dueDate: "2026-12-20",
+                displayDate: "Fin Déc. 2026"
+            },
+
+            // IMMOBILIER DE LUXE
+            {
+                id: 10,
+                name: "Elite Immobilier (Compiègne)",
+                contact: "Frédéric Molina",
+                category: "IMMO",
+                categoryLabel: "Immobilier Prestige",
+                priority: "P2",
+                status: "A_RELANCER",
+                statusLabel: "À relancer",
+                strategy: "Proposer une rencontre autour d'un café. Vendre la valeur de la vidéo immersive drone/stabilisateur pour acquéreurs parisiens.",
+                dueDate: "2027-01-15",
+                displayDate: "Janvier 2027"
+            },
+            {
+                id: 11,
+                name: "Lloyd & Davis (Lamorlaye)",
+                contact: "Direction / Agents",
+                category: "IMMO",
+                categoryLabel: "Immobilier Prestige",
+                priority: "P2",
+                status: "A_RELANCER",
+                statusLabel: "À relancer",
+                strategy: "Zone prestige Chantilly/Lamorlaye. Proposer un format vidéo d'exclusivité (visite + interview agent). Suivi du contact de Nov.",
+                dueDate: "2027-01-15",
+                displayDate: "Janvier 2027"
+            },
+            {
+                id: 12,
+                name: "Marc Foujols Immobilier",
+                contact: "Senlis & Paris",
+                category: "IMMO",
+                categoryLabel: "Immobilier Prestige",
+                priority: "P2",
+                status: "A_RELANCER",
+                statusLabel: "À relancer",
+                strategy: "Proposer de tourner un 'bien test' à tarif préférentiel à Senlis pour prouver l'impact avant de valider un volume mensuel.",
+                dueDate: "2027-01-20",
+                displayDate: "Janvier 2027"
+            },
+
+            // DOSSIERS STRUCTURANTS DEBUT 2027
+            {
+                id: 13,
+                name: "Horloges Huchez",
+                contact: "Direction",
+                category: "CHAUD",
+                categoryLabel: "Prospect Chaud",
+                priority: "P2",
+                status: "PLANIFIE",
+                statusLabel: "Planifié",
+                strategy: "Budget validé pour film 3 entités. Réunion préparatoire fixée en Février 2027 (Tournage en Avril). Petit mail de courtoisie en Janvier.",
+                dueDate: "2027-02-01",
+                displayDate: "Février 2027"
+            },
+            {
+                id: 14,
+                name: "IAD (Aisne & Somme)",
+                contact: "Éric Daussy",
+                category: "SERVICES",
+                categoryLabel: "Services / Immo",
+                priority: "P2",
+                status: "PLANIFIE",
+                statusLabel: "Planifié",
+                strategy: "Vidéos After Work collaborateurs. Événement décalé en Janvier 2027. Revenir vers lui en Dec/Janv pour valider la logistique.",
+                dueDate: "2027-01-10",
+                displayDate: "Janvier 2027"
+            },
+            {
+                id: 15,
+                name: "Fondation Arts et Métiers",
+                contact: "Deborah",
+                category: "SERVICES",
+                categoryLabel: "Institutionnel",
+                priority: "P2",
+                status: "A_RELANCER",
+                statusLabel: "À relancer",
+                strategy: "Liancourt. Aménagement musée et inauguration prévus au Printemps 2027. Prendre des nouvelles du calendrier début 2027.",
+                dueDate: "2027-01-25",
+                displayDate: "Janvier 2027"
+            },
+            {
+                id: 16,
+                name: "Codupal (Arcy)",
+                contact: "Olivier Le Mat",
+                category: "INDUSTRIE",
+                categoryLabel: "Industrie",
+                priority: "P2",
+                status: "A_RELANCER",
+                statusLabel: "À relancer",
+                strategy: "Très favorable en début d'année 2026. Relance douce en début d'année 2027 pour sonder la réouverture de budget.",
+                dueDate: "2027-01-15",
+                displayDate: "Janvier 2027"
+            },
+            {
+                id: 17,
+                name: "Copeaux et Salmon",
+                contact: "Olivier Guérin",
+                category: "INDUSTRIE",
+                categoryLabel: "Industrie",
+                priority: "P2",
+                status: "A_RELANCER",
+                statusLabel: "À relancer",
+                strategy: "Film de présentation validé (2700€) mais constamment reporté. Trouver la bonne relance en 2027.",
+                dueDate: "2027-01-20",
+                displayDate: "Janvier 2027"
+            },
+            {
+                id: 18,
+                name: "Partage (Humanitaire)",
+                contact: "Direction",
+                category: "SERVICES",
+                categoryLabel: "Association",
+                priority: "P2",
+                status: "PLANIFIE",
+                statusLabel: "Planifié",
+                strategy: "Réunion tenue en Nov 2026. Attente de leurs retours sur le thème Vietnam 75-80. Relancer début 2027 si pas de nouvelles.",
+                dueDate: "2027-01-15",
+                displayDate: "Janvier 2027"
+            },
+            {
+                id: 19,
+                name: "Fonderies de Sougland",
+                contact: "Direction",
+                category: "INDUSTRIE",
+                categoryLabel: "Industrie",
+                priority: "P2",
+                status: "PLANIFIE",
+                statusLabel: "Planifié",
+                strategy: "Intéressés mais contraintes de trésorerie suite au rachat. Recontacter en Février 2027 comme convenu.",
+                dueDate: "2027-02-15",
+                displayDate: "Février 2027"
+            },
+            {
+                id: 20,
+                name: "STEMS (Lamorlaye)",
+                contact: "Direction",
+                category: "INDUSTRIE",
+                categoryLabel: "Industrie",
+                priority: "P2",
+                status: "PLANIFIE",
+                statusLabel: "Planifié",
+                strategy: "Tôlerie / Mécano-soudure. Relance demandée pour 2027 (consigne de ne pas rappeler avant février).",
+                dueDate: "2027-02-15",
+                displayDate: "Février 2027"
+            },
+            {
+                id: 21,
+                name: "Groupe Lhotellier",
+                contact: "Samuel Mallet",
+                category: "INDUSTRIE",
+                categoryLabel: "BTP / Industrie",
+                priority: "P2",
+                status: "A_RELANCER",
+                statusLabel: "À relancer",
+                strategy: "Vendre une vidéo premium adossée à la captation d'un premier chantier. Résonance avec le projet Poclain.",
+                dueDate: "2027-02-01",
+                displayDate: "Février 2027"
+            },
+            {
+                id: 22,
+                name: "Proscitec",
+                contact: "Fédération Musées",
+                category: "SERVICES",
+                categoryLabel: "Culture / Musées",
+                priority: "P2",
+                status: "A_RELANCER",
+                statusLabel: "À relancer",
+                strategy: "Montages financiers croisés musées / région. Reporté à 2027. À connecter avec des acteurs industriels.",
+                dueDate: "2027-02-10",
+                displayDate: "Février 2027"
+            },
+
+            // DOSSIERS PRINTEMPS 2027 ET VEILLE
+            {
+                id: 23,
+                name: "Petits-Fils (Beauvais)",
+                contact: "Léa Berenguer (Com)",
+                category: "SERVICES",
+                categoryLabel: "Services / Santé",
+                priority: "P3",
+                status: "A_RELANCER",
+                statusLabel: "À relancer",
+                strategy: "Retour très positif sur la vidéo 'Souvenirs pour ma fille' (Nov. 2026). Imaginer une relance axée sur l'émotion et l'humain.",
+                dueDate: "2027-02-01",
+                displayDate: "Février 2027"
+            },
+            {
+                id: 24,
+                name: "Atelier de l'Avelon (Beauvais)",
+                contact: "Gérant",
+                category: "INDUSTRIE",
+                categoryLabel: "Industrie",
+                priority: "P3",
+                status: "A_RELANCER",
+                statusLabel: "À relancer",
+                strategy: "Appeler vers 17h-17h15 pour parler directement au gérant. Valoriser les films école O'Tech.",
+                dueDate: "2027-03-01",
+                displayDate: "Mars 2027"
+            },
+            {
+                id: 25,
+                name: "RibéPrim",
+                contact: "Caroline Armand",
+                category: "SERVICES",
+                categoryLabel: "Agro / Distribution",
+                priority: "P3",
+                status: "PLANIFIE",
+                statusLabel: "Planifié",
+                strategy: "Gros besoin de film de présentation. Consigne de Sept 2026 de ne pas rappeler avant 6 mois. Relancer fin mars 2027.",
+                dueDate: "2027-03-25",
+                displayDate: "Fin Mars 2027"
+            },
+            {
+                id: 26,
+                name: "Villevoye Homtech",
+                contact: "Artisan Gérant",
+                category: "SERVICES",
+                categoryLabel: "Artisanat",
+                priority: "P3",
+                status: "PLANIFIE",
+                statusLabel: "Planifié",
+                strategy: "Aide photo/vidéo réseaux sociaux. Rappel express convenu pour Avril 2027.",
+                dueDate: "2027-04-15",
+                displayDate: "Avril 2027"
+            },
+            {
+                id: 27,
+                name: "Festival des Forêts",
+                contact: "Alexandra Letuppe",
+                category: "SERVICES",
+                categoryLabel: "Événementiel",
+                priority: "P3",
+                status: "PLANIFIE",
+                statusLabel: "Planifié",
+                strategy: "Nouveau client récurrent. Festival en Juillet -> Relancer Alexandra quelques mois à l'avance (Avril).",
+                dueDate: "2027-04-15",
+                displayDate: "Avril 2027"
+            },
+            {
+                id: 28,
+                name: "Babychou",
+                contact: "Adrien Bocquillon",
+                category: "SERVICES",
+                categoryLabel: "Services",
+                priority: "P3",
+                status: "EN_VEILLE",
+                statusLabel: "En veille",
+                strategy: "Prospect très intéressant mais très relancé. Espacer les contacts et apporter un angle à forte valeur ajoutée.",
+                dueDate: "2027-03-01",
+                displayDate: "Printemps 2027"
+            },
+            {
+                id: 29,
+                name: "Maréchal Pesage",
+                contact: "Kenza Ghammadi",
+                category: "INDUSTRIE",
+                categoryLabel: "Industrie",
+                priority: "P3",
+                status: "EN_VEILLE",
+                statusLabel: "En veille",
+                strategy: "Veulent faire en interne mais manque de compétences. Rester en soutien/accompagnement artistique sans forcer.",
+                dueDate: "2027-03-01",
+                displayDate: "Printemps 2027"
+            },
+            {
+                id: 30,
+                name: "Sur un Plateau (Lacroix St-Ouen)",
+                contact: "Direction",
+                category: "SERVICES",
+                categoryLabel: "Commerce",
+                priority: "P3",
+                status: "EN_VEILLE",
+                statusLabel: "En veille",
+                strategy: "Projet d'agrandissement et déménagement sur Compiègne. Relance opportuniste liée à l'avancée de leur chantier.",
+                dueDate: "2027-04-01",
+                displayDate: "Printemps 2027"
+            },
+
+            // PARTENAIRES B2B
+            {
+                id: 31,
+                name: "1Puls1 (Agence)",
+                contact: "Brice & Alexandre Girardclos",
+                category: "B2B",
+                categoryLabel: "Partenaire B2B",
+                priority: "P3",
+                status: "EN_VEILLE",
+                statusLabel: "Partenaire",
+                strategy: "Bon contact régulier. Écosystème de confiance et opportunités croisées.",
+                dueDate: "2027-01-01",
+                displayDate: "Permanent"
+            },
+            {
+                id: 32,
+                name: "Fabien Katola",
+                contact: "Fabien Katola",
+                category: "B2B",
+                categoryLabel: "Partenaire B2B",
+                priority: "P3",
+                status: "EN_VEILLE",
+                statusLabel: "Partenaire",
+                strategy: "Partenaire B2B. Entretenir le réseau et le partage de leads.",
+                dueDate: "2027-01-01",
+                displayDate: "Permanent"
+            },
+            {
+                id: 33,
+                name: "Sébastien Saubesty",
+                contact: "Saubesty Conseil",
+                category: "B2B",
+                categoryLabel: "Partenaire B2B",
+                priority: "P3",
+                status: "EN_VEILLE",
+                statusLabel: "Partenaire",
+                strategy: "Partenaire conseil B2B. Synergies et recommandations clients.",
+                dueDate: "2027-01-01",
+                displayDate: "Permanent"
+            },
+
+            // ARCHIVÉS OU PASSIFS
+            {
+                id: 34,
+                name: "SAML",
+                contact: "J.-P. Chaubier / O. Tasson",
+                category: "INDUSTRIE",
+                categoryLabel: "Industrie",
+                priority: "P3",
+                status: "EN_VEILLE",
+                statusLabel: "En veille",
+                strategy: "Silence radio sur devis remontage 2000€. Dossier mis en sommeil commercial. Intégration passive newsletters/vœux.",
+                dueDate: "2027-01-01",
+                displayDate: "Veille"
+            },
+            {
+                id: 35,
+                name: "Boulangerie Ange (Jaux)",
+                contact: "Marc Poullain",
+                category: "SERVICES",
+                categoryLabel: "Commerce",
+                priority: "P3",
+                status: "PERDU",
+                statusLabel: "Classé Perdu",
+                strategy: "Relances restées sans réponse malgré visites et vocaux. Classement en perdu pour ne plus perdre d'énergie.",
+                dueDate: "2027-01-01",
+                displayDate: "Archivé"
+            }
+        ];
+
+        // Render Table Function
+        function renderTable(data) {
+            const tbody = document.getElementById('prospectsTableBody');
+            const emptyState = document.getElementById('emptyState');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-800/40 transition-colors group';
+
+                // Priority Badge style
+                let priorityBadge = '';
+                if (item.priority === 'P1') {
+                    priorityBadge = '<span class="px-2 py-0.5 text-[10px] font-bold rounded bg-rose-500/10 text-rose-400 border border-rose-500/20">P1 - Immédiat</span>';
+                } else if (item.priority === 'P2') {
+                    priorityBadge = '<span class="px-2 py-0.5 text-[10px] font-bold rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">P2 - Début 2027</span>';
+                } else {
+                    priorityBadge = '<span class="px-2 py-0.5 text-[10px] font-bold rounded bg-slate-700/40 text-slate-400 border border-slate-700/50">P3 - Veille/Printemps</span>';
+                }
+
+                // Status Badge style
+                let statusBadge = '';
+                switch(item.status) {
+                    case 'ACTION_FAITE':
+                        statusBadge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Fait</span>';
+                        break;
+                    case 'A_RELANCER':
+                        statusBadge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>À relancer</span>';
+                        break;
+                    case 'PLANIFIE':
+                        statusBadge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20"><span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>Planifié</span>';
+                        break;
+                    case 'EN_VEILLE':
+                        statusBadge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-full bg-slate-700/30 text-slate-400 border border-slate-700/40"><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>En veille</span>';
+                        break;
+                    case 'PERDU':
+                        statusBadge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded-full bg-slate-800 text-slate-500 line-through"><span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span>Perdu</span>';
+                        break;
+                }
+
+                // Google Calendar Link Generator
+                const calendarUrl = generateGoogleCalendarUrl(
+                    `Relance Les Filmeurs : ${item.name}`,
+                    `Action commerciale pour Les Filmeurs Productions.\nInterlocuteur : ${item.contact}\nStratégie : ${item.strategy}`,
+                    item.dueDate
+                );
+
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4 font-semibold text-white group-hover:text-amber-400 transition-colors">
+                        ${item.name}
+                    </td>
+                    <td class="py-3.5 px-4 text-slate-300">
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="user" class="w-3.5 h-3.5 text-slate-500"></i>
+                            ${item.contact}
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                        <span class="text-xs text-slate-400 bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800">
+                            ${item.categoryLabel}
+                        </span>
+                    </td>
+                    <td class="py-3.5 px-4">
+                        <div class="flex flex-col gap-1 items-start">
+                            ${priorityBadge}
+                            ${statusBadge}
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-4 text-xs text-slate-300 leading-relaxed">
+                        ${item.strategy}
+                    </td>
+                    <td class="py-3.5 px-4 whitespace-nowrap text-xs font-medium text-slate-400">
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="calendar" class="w-3.5 h-3.5 text-amber-500"></i>
+                            ${item.displayDate}
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                        <a href="${calendarUrl}" target="_blank" title="Ajouter un rappel Google Agenda" 
+                           class="inline-flex items-center gap-1 text-xs bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-300 font-medium px-2.5 py-1.5 rounded-lg border border-slate-700/60 transition-all">
+                            <i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i>
+                            <span class="hidden sm:inline">Agenda</span>
+                        </a>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Re-initialize icons
+            lucide.createIcons();
+            updateStats();
+        }
+
+        // Helper to format Google Calendar URL
+        function generateGoogleCalendarUrl(title, details, dateStr) {
+            if(!dateStr) return '#';
+            const cleanDate = dateStr.replace(/-/g, '');
+            const dates = `${cleanDate}T090000Z/${cleanDate}T100000Z`;
+            return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&details=${encodeURIComponent(details)}&dates=${dates}`;
+        }
+
+        // Filter Function
+        function filterData() {
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+            const categoryValue = document.getElementById('categoryFilter').value;
+            const priorityValue = document.getElementById('priorityFilter').value;
+            const statusValue = document.getElementById('statusFilter').value;
+
+            const filtered = prospectsData.filter(item => {
+                const matchesSearch = item.name.toLowerCase().includes(searchValue) ||
+                                      item.contact.toLowerCase().includes(searchValue) ||
+                                      item.strategy.toLowerCase().includes(searchValue);
+                
+                const matchesCategory = (categoryValue === 'ALL') || (item.category === categoryValue);
+                const matchesPriority = (priorityValue === 'ALL') || (item.priority === priorityValue);
+                const matchesStatus = (statusValue === 'ALL') || (item.status === statusValue);
+
+                return matchesSearch && matchesCategory && matchesPriority && matchesStatus;
+            });
+
+            renderTable(filtered);
+        }
+
+        // Stats Counter Update
+        function updateStats() {
+            document.getElementById('stat-p1').innerText = prospectsData.filter(i => i.priority === 'P1').length;
+            document.getElementById('stat-chauds').innerText = prospectsData.filter(i => i.category === 'CHAUD').length;
+            document.getElementById('stat-total').innerText = prospectsData.length;
+        }
+
+        // Event Listeners
+        document.getElementById('searchInput').addEventListener('input', filterData);
+        document.getElementById('categoryFilter').addEventListener('change', filterData);
+        document.getElementById('priorityFilter').addEventListener('change', filterData);
+        document.getElementById('statusFilter').addEventListener('change', filterData);
+
+        document.getElementById('resetFilters').addEventListener('click', () => {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = 'ALL';
+            document.getElementById('priorityFilter').value = 'ALL';
+            document.getElementById('statusFilter').value = 'ALL';
+            renderTable(prospectsData);
+        });
+
+        // Initial Render
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTable(prospectsData);
+        });
+    </script>
+</body>
+</html>
